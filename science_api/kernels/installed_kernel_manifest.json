@@ -1,0 +1,32 @@
+{
+  "de421.bsp": {
+    "source": "User uploaded file; user identified official NASA NAIF source",
+    "bytes": 16790528,
+    "sha256": "08b20db2ae22488650641c5a9033e5bfda4b1c4b440cfeaf20f621cfa18ecdb3",
+    "signature_valid": true
+  },
+  "moon_pa_de421_1900-2050.bpc": {
+    "source": "User uploaded file; user identified official NASA NAIF source",
+    "bytes": 1770496,
+    "sha256": "656f90616403d75a75f0cd6c8830fc5b44f8cb4facb5ccb8915e752b397520cf",
+    "signature_valid": true
+  },
+  "moon_080317.tf": {
+    "source": "User uploaded file; user identified official NASA NAIF source",
+    "bytes": 21437,
+    "sha256": "78732477b96f9863e7b0d65bcee3c22b8707ca5ed0db56d1173319cb2e8c7993",
+    "signature_valid": true
+  },
+  "naif0012.tls": {
+    "source": "User uploaded file; user identified official NASA NAIF source",
+    "bytes": 5257,
+    "sha256": "678e32bdb5a744117a467cd9601cd6b373f0e9bc9bbde1371d5eee39600a039b",
+    "signature_valid": true
+  },
+  "pck00011.tpc": {
+    "source": "User uploaded pck00011.tpc.txt; NASA NAIF PCK file header present",
+    "bytes": 131226,
+    "sha256": "3dff7b1dbeceaa01f25467767d3fa25816051c85d162d1edf04acb310ee28bb1",
+    "signature_valid": true
+  }
+}
