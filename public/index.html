@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <title>LUNA — Lunar Landing Site Navigator</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./site01.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-mark">◒</span><span><b>LUNA</b><small>LUNAR LANDING SITE NAVIGATOR</small></span></a>
+  <nav><a href="#planner">Planner</a><a href="#site01">Site01</a><a href="#assessment">Assessment</a><a href="#compare">Compare</a><a href="#data">Data centre</a></nav>
+  <span class="system"><i></i> SYSTEM READY</span>
+</header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">MISSION PLANNING · LUNAR SURFACE</p>
+      <h1>Plan beyond the<br><em>landing coordinates.</em></h1>
+      <p class="hero-copy">Explore historical landing sites, test custom coordinates, change mission dates, and compare environmental conditions across multiple scenarios.</p>
+      <a class="primary-link" href="#planner">Open mission planner <span>↗</span></a>
+    </div>
+    <div class="hero-moon" aria-label="Illustration of the Moon"><span>LUNA</span></div>
+  </section>
+
+  <aside class="notice"><b>SCIENTIFIC STATUS</b><span>Data-backed results require the connected science API, compatible NAIF SPICE kernels and a LOLA DEM covering the selected coordinate. Otherwise the local preview remains explicitly illustrative.</span></aside>
+
+  <section id="planner">
+    <div class="section-head"><div><p class="eyebrow">01 / SITE & TIME</p><h2>Mission planner</h2></div><span class="section-meta">Mission time: UTC</span></div>
+    <div class="planner-grid">
+      <article class="panel controls">
+        <h3>Landing parameters</h3>
+        <label>Reference location<select id="location"></select></label>
+        <div class="field-pair">
+          <label>Latitude (°)<input id="lat" type="number" min="-90" max="90" step="0.0001" value="-89.9"></label>
+          <label>Longitude (°)<input id="lon" type="number" min="-180" max="180" step="0.0001" value="0"></label>
+        </div>
+        <div class="field-pair">
+          <label>Landing date<input id="date" type="date" value="2027-01-15"></label>
+          <label>Landing time (UTC)<input id="time" type="time" value="12:00"></label>
+        </div>
+        <div class="field-pair">
+          <label>Analysis window (days)<input id="analysisDays" type="number" min="1" max="14" step="1" value="3"></label>
+          <label>Time step (minutes)<select id="timeStep"><option value="5">5 min</option><option value="10" selected>10 min</option><option value="30">30 min</option><option value="60">60 min</option></select></label>
+        </div>
+        <div class="field-pair">
+          <label>Observer height (m)<input id="observerHeight" type="number" min="0" max="20" step="0.5" value="1"></label>
+          <label>Maximum slope target (°)<input id="maxSlope" type="number" min="0" max="45" step="0.5" value="12"></label>
+        </div>
+        <div class="field-pair">
+          <label>Minimum sunlight (h)<input id="minSunHours" type="number" min="0" max="336" step="0.5" value="4"></label>
+          <label>Minimum Earth LOS (h)<input id="minEarthHours" type="number" min="0" max="336" step="0.5" value="2"></label>
+        </div>
+        <div class="field-pair">
+          <label>Solar panel area (m²)<input id="panelArea" type="number" min="0.01" max="10000" step="0.1" value="1"></label>
+          <label>Solar efficiency (0–1)<input id="panelEfficiency" type="number" min="0.01" max="1" step="0.01" value="0.25"></label>
+        </div>
+        <label>Scenario name<input id="scenarioName" value="Shackleton — Original" maxlength="70"></label>
+        <div class="button-row"><button id="assessBtn">Assess location ↗</button><button class="button-quiet" id="saveBtn">Save scenario +</button></div>
+        <p class="hint">Choose a catalogue site or enter any valid selenographic latitude and longitude. You can save up to 8 alternatives. The science service evaluates a 3-day window at 10-minute steps; screening targets are example assumptions, not landing standards.</p>
+        <div class="catalogue-note"><b>Catalogue note</b><span>Coordinates are starter reference values. Verify each against primary mission records before scientific use.</span></div>
+      </article>
+
+      <article class="panel map-panel">
+        <div class="panel-head"><div><h3>Lunar surface explorer</h3><p class="hint">Select a marker or click the map to set custom coordinates.</p></div>
+          <div class="segmented"><button class="active" id="view2d">2D MAP</button><button id="view3d">3D GLOBE</button></div>
+        </div>
+        <div class="map-wrap" id="mapWrap">
+          <canvas id="lunarMap" aria-label="Interactive schematic lunar coordinate map"></canvas>
+          <div class="map-legend"><span><i class="dot historical"></i> Historical mission</span><span><i class="dot target"></i> Candidate region</span><span><i class="dot custom"></i> Custom point</span></div>
+          <div class="map-coords" id="mapCoords">LAT — · LON —</div>
+        </div>
+        <div class="map-wrap globe-wrap hidden" id="globeWrap">
+          <div class="panel-head"><div><h3>LOLA terrain mesh</h3><p class="hint">Load the actual elevation grid for the selected coordinate. Drag to rotate; scroll to zoom.</p></div><button id="loadTerrainBtn">Load LOLA terrain ↗</button></div>
+          <canvas id="lunarGlobe" aria-label="Interactive 3D terrain mesh rendered from LOLA elevation data"></canvas>
+          <p class="globe-caption" id="terrain3dStatus">No terrain loaded · connect the science API and select a coordinate covered by an installed LOLA DEM.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="site01">
+    <div class="section-head"><div><p class="eyebrow">SITE01 / INSTALLED RASTER DATA</p><h2>Connecting Ridge · Site01</h2></div><span class="section-meta">NASA GSFC / LOLA-derived products · 5 m grid</span></div>
+    <article class="panel">
+      <h3>Site01 terrain explorer</h3>
+      <p class="hint">Five uploaded GeoTIFF rasters are included in the Python science service: surface elevation, slope, LOLA measurement count, elevation uncertainty and slope uncertainty. Select Site01, open the existing 3D view, and inspect raster values at the chosen location. Results are raster samples, not independent landing safety certification. Solar / Earth geometry still requires configured SPICE kernels.</p>
+      <div class="button-row"><button id="site01GoBtn">Open Site01 in 3D ↗</button><button class="button-quiet" id="site01InspectBtn">Inspect current coordinates</button></div>
+      <p id="site01Result" class="site01-readout" aria-live="polite">Select “Open Site01 in 3D” to load the installed terrain, or inspect current coordinates.</p>
+      <p class="hint">The original 3,200 × 3,200 rasters are preserved, including metadata and pixel values. The interactive terrain mesh samples a smaller grid for performance, and uses 2.2× vertical exaggeration for display only.</p>
+    </article>
+  </section>
+
+
+  <section id="terrain-science">
+    <div class="section-head"><div><p class="eyebrow">SITE01 / DERIVED SURFACE SCIENCE</p><h2>Surface diagnostics &amp; mission timeline</h2></div><span class="section-meta">Source elevation: installed Site01 raster</span></div>
+    <div class="detail-grid">
+      <article class="panel"><h3>Real-data 2D relief</h3>
+        <img src="./data/site01_relief.png" alt="Actual LOLA Site01 elevation relief, 512 × 512 downsampled" class="site01-relief" loading="lazy">
+        <p class="hint">Downsampled from the uploaded Site01 DEM; gray-scale relief is diagnostic imagery, not an LROC photograph. Location-specific slope and shadows require the Python science API.</p>
+        <div class="button-row"><button id="terrainAnalyzeBtn">Analyze current terrain ↗</button><button class="button-quiet" id="terrainShadowBtn">Analyze shadows using assessed Sun</button></div>
+        <p class="site01-readout" id="terrainAnalysisStatus">Choose Site01 and analyze a raster-covered location.</p>
+      </article>
+      <article class="panel"><h3>Derived slope / approximate terrain shadows</h3>
+        <canvas width="512" height="512" class="science-grid-canvas" id="slopeMap" aria-label="Derived terrain slope / shadow map"></canvas>
+        <p class="hint">Finite-difference slope from a 65 × 65 downsampled grid. Optional shadows use a sampled finite-grid ray model and the Sun angles from your last data-backed SPICE assessment. Craters/ridges are NOT automatically certified.</p>
+      </article>
+    </div>
+    <article class="panel"><div class="panel-head"><h3>Sunlight and direct-to-Earth visibility timeline</h3><button id="exportScienceBtn" class="button-quiet">Export assessment JSON ↗</button></div>
+      <canvas id="missionTimeline" class="science-timeline" width="1050" height="160" aria-label="Time series of Sun and Earth terrain-horizon visibility"></canvas>
+      <div class="data-row"><span>Exploratory screening score</span><b id="screeningScore">Not calculated</b></div>
+      <p class="hint">Blue: Sun visible, amber: Earth geometrically visible. Timeline only appears for data-backed assessments. Score weights: slope 40%, sunlight 35%, Earth visibility 25%; this is not a certified mission-safety ranking.</p>
+    </article>
+  </section>
+  <section id="assessment">
+    <div class="section-head"><div><p class="eyebrow">02 / ENVIRONMENT</p><h2>Site assessment</h2></div><span class="section-meta" id="calculationState">Waiting for assessment</span></div>
+    <div class="metric-grid">
+      <div class="metric"><span>SOLAR ELEVATION</span><b id="sunValue">—</b><small id="sunMode">degrees · illustrative</small></div>
+      <div class="metric"><span>EARTH ELEVATION</span><b id="earthValue">—</b><small id="earthMode">degrees · illustrative</small></div>
+      <div class="metric"><span>SUN ABOVE HORIZON</span><b id="sunVisibility">—</b><small>terrain-horizon visibility</small></div>
+      <div class="metric"><span>EARTH ABOVE HORIZON</span><b id="earthVisibility">—</b><small>not a communication link</small></div>
+    </div>
+    <div class="detail-grid">
+      <article class="panel"><h3>Local sky geometry</h3>
+        <div class="sky-view"><div class="sky-sun" id="skySun">☼<small>SUN</small></div><div class="sky-earth" id="skyEarth">●<small>EARTH</small></div><div class="sky-horizon"></div></div>
+        <p class="hint">Conceptual sky diagram. Accurate apparent positions require a defined lunar body-fixed frame, observer location, time scale, and validated ephemeris.</p>
+      </article>
+      <article class="panel"><h3>LOLA terrain horizon</h3>
+        <canvas id="horizonPlot" width="560" height="320" aria-label="Polar plot of LOLA terrain horizon by azimuth"></canvas>
+        <p class="hint">Horizon elevation by azimuth, sampled from the finest loaded LOLA DEM covering this coordinate. This is a terrain obstruction profile, not a rendered terrain mesh.</p>
+      </article>
+      <article class="panel"><h3>Mission constraints</h3>
+        <div class="data-row"><span>Terrain elevation</span><b id="terrainElevation">Not connected</b></div>
+        <div class="data-row"><span>Terrain slope</span><b id="terrainSlope">Not connected</b></div>
+        <div class="data-row"><span>Elevation uncertainty (RMS)</span><b id="terrainUncertainty">Not connected</b></div>
+        <div class="data-row"><span>LOLA return count</span><b id="lolaCount">Not connected</b></div>
+        <div class="data-row"><span>LOLA terrain tile</span><b id="terrainSource">No LOLA coverage</b></div>
+        <div class="data-row"><span>Sunlight window total</span><b id="sunHours">Not calculated</b></div>
+        <div class="data-row"><span>Earth line-of-sight total</span><b id="earthHours">Not calculated</b></div>
+        <div class="data-row"><span>Mission screening</span><b id="missionAssessment">Not assessed</b></div>
+        <p class="hint" id="missionCriteria">Screening targets appear after assessment.</p>
+        <div class="data-row"><span>Time to sunset</span><b id="sunsetTime">Not calculated</b></div>
+        <div class="data-row"><span>Time to Earthset</span><b id="earthsetTime">Not calculated</b></div>
+        <div class="data-row"><span>Peak horizontal irradiance</span><b id="solarEnergy">Not calculated</b></div>
+        <div class="data-row"><span>Illustrative panel energy</span><b id="solarPanelEnergy">Not calculated</b></div>
+        <div class="data-row"><span>Communication</span><b id="communication">Not assessed</b></div>
+      </article>
+    </div>
+    <div class="assessment-note" id="assessmentNote">Choose a site and press “Assess location”.</div>
+  </section>
+
+  <section id="compare">
+    <div class="section-head"><div><p class="eyebrow">03 / MISSION REPLANNING</p><h2>Scenario comparison</h2></div><span class="section-meta">Up to 8 saved scenarios</span></div>
+    <article class="panel">
+      <div class="panel-head"><div><h3>Compare landing alternatives</h3><p class="hint">Change the location, date, or time to create a new scenario.</p></div><button id="compareBtn">Compare scenarios ↗</button></div>
+      <div class="scenario-list" id="scenarioList"><p class="hint">No scenarios saved yet.</p></div>
+      <div class="table-scroll" id="comparisonTable"></div>
+    </article>
+  </section>
+
+  <section id="data">
+    <div class="section-head"><div><p class="eyebrow">04 / DATA PROVENANCE</p><h2>Data centre</h2></div><button class="button-quiet" id="refreshBtn">Check source manifest ↻</button></div>
+    <div class="detail-grid">
+      <article class="panel"><h3>Scientific data sources</h3>
+        <div class="data-row"><span>LOLA terrain / DEM</span><b id="lolaStatus">Not configured</b></div>
+        <div class="data-row"><span>Installed LOLA DEM products</span><b id="lolaProductCount">—</b></div>
+        <div class="data-row"><span>Installed LOLA DEM storage</span><b id="lolaStorage">—</b></div>
+        <div class="data-row"><span>Science API</span><b id="scienceApiStatus">Not configured</b></div>
+        <div class="data-row"><span>JPL Horizons / SPICE</span><b id="jplStatus">Not connected</b></div>
+        <div class="data-row"><span>LROC imagery</span><b id="lrocStatus">Not configured</b></div>
+        <div class="data-row"><span>Application cache</span><b id="cacheStatus">Browser demo cache</b></div>
+        <p class="hint">Coverage is discovered from installed files. The science API selects the finest-resolution installed DEM covering the requested coordinates and reports the actual product and pixel spacing.</p>
+        <p class="source-links"><a href="https://pgda.gsfc.nasa.gov/products/78" target="_blank" rel="noreferrer">NASA 5 m LOLA sites</a><a href="https://pgda.gsfc.nasa.gov/products/90" target="_blank" rel="noreferrer">NASA South Pole LOLA</a><a href="https://astrogeology.usgs.gov/search/map/moon_lro_lola_dem_118m" target="_blank" rel="noreferrer">Global LOLA 118 m</a><a href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noreferrer">JPL Horizons</a><a href="https://www.lroc.asu.edu/" target="_blank" rel="noreferrer">LROC</a><a href="https://pds.nasa.gov/" target="_blank" rel="noreferrer">NASA PDS</a></p>
+      </article>
+      <article class="panel"><h3>Update monitor</h3>
+        <p id="updateMessage" class="hint">No source manifest has been checked.</p>
+        <div class="data-row"><span>Last check</span><b id="lastCheck">—</b></div>
+        <div class="data-row"><span>Last successful check</span><b id="lastSuccess">—</b></div>
+        <div class="data-row"><span>Update method</span><b>Manifest + scheduled worker</b></div>
+      </article>
+    </div>
+    <article class="panel differentiator"><p class="eyebrow">WHY LUNA?</p><h3>From map exploration to mission replanning.</h3>
+      <p>LUNA’s proposed contribution is a workflow that compares multiple site-and-date combinations, exposes changing Sun/Earth geometry, tracks visibility windows, and explains how a schedule or location change affects mission constraints. This is a product direction—not a claim that NASA Moon Trek or QuickMap lacks those capabilities. A fair feature-by-feature benchmark is still required.</p>
+    </article>
+  </section>
+  <footer><b>LUNA</b><span>Educational prototype · Not for operational mission decisions</span></footer>
+</main>
+<script src="./terrain-webgl.js" defer></script>
+<script src="./app.js" defer></script>
+</body></html>
