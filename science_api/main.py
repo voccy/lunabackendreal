@@ -498,6 +498,53 @@ def lola_terrain_analysis(latitude: float = Query(ge=-90, le=90),
             "shadow_mask":mask,"shadowed_fraction_of_evaluable_cells":round(sum(cells)/len(cells),4) if cells else None,
             "valid_cell_count":len(cells),"method":"Finite-grid approximate ray casting; not a validated full-resolution lunar shadow solution."}
     return payload
+
+# Connect the website buttons to the existing Python science API.
+app.add_api_route("/api/assess", assess, methods=["POST"])
+app.add_api_route("/api/lola-terrain", lola_terrain_grid, methods=["GET"])
+app.add_api_route("/api/site01-point", site01_point, methods=["GET"])
+app.add_api_route("/api/lola-terrain-analysis", lola_terrain_analysis, methods=["GET"])
+app.add_api_route("/api/lola-catalog", lola_catalog, methods=["GET"])
+
+
+@app.post("/api/compare")
+def api_compare(payload: dict):
+    scenarios = payload.get("scenarios")
+    if not isinstance(scenarios, list) or not 1 <= len(scenarios) <= 8:
+        raise HTTPException(400, "Compare 1 to 8 scenarios.")
+    results = []
+    for scenario in scenarios:
+        try:
+            request = AssessmentRequest.model_validate(scenario)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc))
+        results.append(assess(request))
+    return {"results": results}
+
+
+@app.get("/api/data-status")
+def api_data_status():
+    h = health()
+    return {
+        "terrain": {
+            "status": f"{h['lola_dem_count']} LOLA DEM products detected",
+            "count": h["lola_dem_count"],
+            "bytes": h["lola_bytes"]
+        },
+        "ephemeris": {
+            "status": "Connected" if not h["spice_missing"] and h["spiceypy_installed"] else "Setup required"
+        },
+        "imagery": {"status": "Not configured"},
+        "science_api": {"status": h["status"], "health": h},
+        "cache": {"status": "Not configured"},
+        "updater": {"message": "Cloudflare updater is not available on Back4app."}
+    }
+
+
+@app.post("/api/data-refresh")
+def api_data_refresh():
+    return {"message": "Automatic data refresh is not configured on Back4app."}
+
                               
 from fastapi.staticfiles import StaticFiles
 
