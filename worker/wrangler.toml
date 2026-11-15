@@ -1,0 +1,13 @@
+name = "luna-scheduled-updater"
+main = "scheduled-updater.js"
+compatibility_date = "2026-11-02"
+
+[triggers]
+crons = ["0 */24 * * *"]
+
+# Before enabling KV persistence: create a real KV namespace and add the binding
+# in your Cloudflare dashboard, or insert the actual namespace ID here.
+# Leaving it commented avoids a broken deploy caused by a fake namespace ID.
+
+[vars]
+# Set LUNA_MANIFEST_URL in Worker settings; do not commit private tokens.
