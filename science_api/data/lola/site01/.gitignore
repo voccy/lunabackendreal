@@ -1,0 +1,6 @@
+.dev.vars
+science_api/data/lola/
+science_api/data/ingestion_manifest.json
+science_api/kernels/
+__pycache__/
+*.pyc

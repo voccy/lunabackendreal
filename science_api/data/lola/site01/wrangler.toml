@@ -1,0 +1,11 @@
+name = "luna-lunar-navigator"
+compatibility_date = "2026-11-02"
+pages_build_output_dir = "public"
+
+# Optional: configure a Cloudflare KV binding named LUNA_CACHE in the Pages dashboard.
+# No placeholder ID is shipped: fake namespace IDs can break deployment.
+
+[vars]
+# Optional. Set this to a JSON manifest URL in Cloudflare environment variables.
+# LUNA_MANIFEST_URL = "https://your-domain.example/luna-manifest.json"
+# LUNA_SCIENCE_API_URL = "https://your-deployed-science-api.example"

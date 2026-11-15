@@ -1,0 +1,7 @@
+/* Site01-only styles. The original Cloudflare Ready style.css is preserved byte-for-byte. */
+.site01-readout{margin:16px 0;padding:14px;border:1px solid rgba(134,191,221,.24);border-radius:9px;line-height:1.8;font:12px/1.8 monospace;color:#d3eaf7;overflow-wrap:anywhere}
+
+/* New science panels are isolated here; original Cloudflare Ready style.css stays unchanged. */
+.site01-relief{width:min(100%,480px);aspect-ratio:1;object-fit:contain;border:1px solid #29465a;border-radius:8px;background:#102231;display:block;margin:12px auto}
+.science-grid-canvas{display:block;width:min(100%,480px);height:auto;aspect-ratio:1;image-rendering:pixelated;border:1px solid #29465a;border-radius:8px;background:#102231;margin:12px auto}
+.science-timeline{display:block;width:100%;height:auto;min-height:105px;background:#0b1926;border:1px solid #29465a;border-radius:8px;margin:10px auto 20px}

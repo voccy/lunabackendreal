@@ -1,0 +1,5 @@
+.git
+**/__pycache__
+**/*.pyc
+science_api/data/**
+science_api/kernels/**

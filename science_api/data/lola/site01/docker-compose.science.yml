@@ -1,0 +1,15 @@
+services:
+  luna-science-api:
+    build:
+      context: .
+      dockerfile: science_api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      LUNA_DATA_DIR: /app/science_api/data
+      LUNA_KERNEL_DIR: /app/science_api/kernels
+      LUNA_MOON_FRAME: MOON_ME
+    volumes:
+      - ./science_api/data:/app/science_api/data
+      - ./science_api/kernels:/app/science_api/kernels
+    restart: unless-stopped
