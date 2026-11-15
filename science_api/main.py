@@ -498,3 +498,12 @@ def lola_terrain_analysis(latitude: float = Query(ge=-90, le=90),
             "shadow_mask":mask,"shadowed_fraction_of_evaluable_cells":round(sum(cells)/len(cells),4) if cells else None,
             "valid_cell_count":len(cells),"method":"Finite-grid approximate ray casting; not a validated full-resolution lunar shadow solution."}
     return payload
+                              
+from fastapi.staticfiles import StaticFiles
+
+app.mount(
+    "/",
+    StaticFiles(directory=ROOT.parent / "public", html=True),
+    name="frontend"
+)
+                              
